@@ -100,25 +100,21 @@ async def seed_colleges():
         db = get_database()
         
         for item in data:
-            # Clean data if needed?
-            # Ensure it matches schema.
             try:
-                # Remove extra fields if any? CollegeCreate allows extra? Config says yes?
-                # Actually Config in CollegeInDB says ignore extra?
-                
-                # Check exist
-                existing = await db.colleges.find_one({"id": item["id"]})
-                if existing:
-                    print(f"College {item['id']} exists. Skipping.")
-                    continue
-                
                 # Validate with Pydantic
                 college_in = CollegeCreate(**item)
-                await db.colleges.insert_one(college_in.model_dump(by_alias=True, exclude={"mongo_id"}))
-                print(f"Inserted {item['name']}")
+                college_dict = college_in.model_dump(by_alias=True, exclude={"mongo_id"})
+                
+                # Upsert: Update if exists, insert if new
+                await db.colleges.update_one(
+                    {"id": item["id"]},
+                    {"$set": college_dict},
+                    upsert=True
+                )
+                print(f"Synced {item['name']}")
                 
             except Exception as e:
-                print(f"Error inserting {item.get('name')}: {e}")
+                print(f"Error syncing {item.get('name')}: {e}")
 
         await close_mongo_connection()
         
