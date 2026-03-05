@@ -79,9 +79,10 @@ async def seed_colleges():
     # Let's try running node command directly to get json string.
     try:
         # We need to run this from root where src is.
+        project_root = os.path.join(os.path.dirname(__file__), '..', '..')
         result = subprocess.run(
             cmd, 
-            cwd=os.path.join(os.path.dirname(__file__), '..'),
+            cwd=project_root,
             capture_output=True, 
             text=True
         )
