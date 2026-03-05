@@ -24,6 +24,7 @@ app = FastAPI(
 origins = [
     "https://master-application-form.vercel.app",
     "https://applichoice.naviksha.co.in",
+    "https://applichoice-198875791604.asia-south1.run.app",
     "http://localhost:5173",
     "http://localhost:3000",
 ]

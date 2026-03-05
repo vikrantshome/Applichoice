@@ -106,7 +106,10 @@ async def dev_login(request: DevLoginRequest):
         raise HTTPException(status_code=404, detail="Student not found / not onboarded")
     
     # Generate JWT directly
-    token = create_student_token({"sub": request.phone})
+    token = create_access_token(
+        data={"sub": request.phone, "role": "student"},
+        expires_delta=timedelta(days=30),
+    )
     return {
         "success": True,
         "message": "Dev login successful",
